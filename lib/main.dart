@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lessons_schedule_pnu/page/home.dart';
-import 'package:lessons_schedule_pnu/util/cp1251.dart';
 
 void main() => runApp(new ScheduleApp());
 

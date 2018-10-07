@@ -8,6 +8,7 @@ String decodeCp1251(bytes) {
 }
 
 String encodeCp1251Url(String s) {
+  if (s == null) return '';
   var tmp = [];
   for (var i = 0; i < s.length; i++) {
     var ord = s.codeUnitAt(i);
