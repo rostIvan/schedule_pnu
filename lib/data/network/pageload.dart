@@ -5,6 +5,13 @@ import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
 import 'package:lessons_schedule_pnu/util/cp1251.dart';
 
+class NetworkException {
+  final String message;
+  final int errorCode;
+  final String url;
+  NetworkException(this.message, this.errorCode, this.url);
+}
+
 class PageLoader {
   final String url;
   String group, teacher, startDate, endDate;
@@ -20,7 +27,7 @@ class PageLoader {
         headers: _headers()
     );
     if(response.statusCode != 200)
-      throw http.ClientException('Status code = ${response.statusCode}', Uri.parse(url));
+      throw NetworkException('Response not equal 200', response.statusCode, url);
     final page = decodeCp1251(response.bodyBytes);
     return parser.parse(page);
   }

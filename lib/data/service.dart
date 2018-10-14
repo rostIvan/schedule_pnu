@@ -13,7 +13,7 @@ abstract class ScheduleService {
 }
 
 abstract class ApiSearchService {
-  Future<List<dynamic>> fetchALl();
+  Future<List<String>> fetchALl();
 }
 
 abstract class ApiSearch implements ApiSearchService {
@@ -26,13 +26,14 @@ abstract class ApiSearch implements ApiSearchService {
   ApiSearch(this.query, this.levelCode);
 
   @override
-  Future<List<dynamic>> fetchALl() async {
+  Future<List<String>> fetchALl() async {
     final fullUrl = '$baseUrl&lev=$levelCode&faculty=0&query=$query';
     final response = await http.get(fullUrl);
     if (response.statusCode != 200)
       throw http.ClientException('Status code = ${response.statusCode}', Uri.parse(fullUrl));
     var jsonResponse = json.decode(decodeCp1251(response.bodyBytes));
-    return jsonResponse['suggestions'];
+    final suggestions = jsonResponse['suggestions'];
+    return  List<String>.from(suggestions);
   }
 }
 
