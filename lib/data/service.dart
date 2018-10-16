@@ -46,6 +46,7 @@ class GroupsSuggestionSearch extends ApiSearch {
 }
 
 class ScheduleScrapper implements ScheduleService {
+// Example of POST args faculty=0&teacher=&group=%B2%CF%C7-3&sdate=&edate=28.10.2018&n=700
   final String url = 'http://asu.pnu.edu.ua/cgi-bin/timetable.cgi?n=700';
   final String group;
   final String teacher;

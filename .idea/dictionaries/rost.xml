@@ -2,6 +2,7 @@
   <dictionary name="rost">
     <words>
       <w>interactor</w>
+      <w>preloader</w>
     </words>
   </dictionary>
 </component>

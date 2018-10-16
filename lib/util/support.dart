@@ -1,5 +1,10 @@
 import 'dart:async';
 
+enum ScheduleType {
+  GROUP,
+  TEACHER
+}
+
 class DebounceAction {
   Timer timer;
 

@@ -1,23 +1,20 @@
 import 'dart:io';
 
 import 'package:lessons_schedule_pnu/data/network/pageload.dart';
+import 'package:lessons_schedule_pnu/data/preference.dart';
 import 'package:lessons_schedule_pnu/data/service.dart';
 import 'package:lessons_schedule_pnu/page/selection/state.dart';
 import 'package:lessons_schedule_pnu/page/selection/view.dart';
 import 'package:lessons_schedule_pnu/util/support.dart';
 import 'package:redux/redux.dart';
 
-enum SearchType {
-  GROUP,
-  TEACHER
-}
-
 class SearchInteractor extends BaseSearchInteractor {
-  SearchType searchType = SearchType.GROUP;
+  ScheduleType searchType = ScheduleType.GROUP;
+  final prefWrapper = SharedPrefWrapper();
 
   @override
-  ApiSearchService apiSearchService(String query) =>
-      searchType == SearchType.GROUP ? GroupsSuggestionSearch(query) : TeacherSuggestionSearch(query);
+  ApiSearchService apiSearchService(String query) => _typeIsGroup() ?
+      GroupsSuggestionSearch(query) : TeacherSuggestionSearch(query);
 
   void changeSearchType() {
     searchType = _newSearchType();
@@ -30,17 +27,22 @@ class SearchInteractor extends BaseSearchInteractor {
     _store.dispatch(SearchResponseAction('', [], null));
   }
 
-  void selectItem(SelectedItem selectedItem) {
+  void selectItem(ListItem selectedItem) async {
     print('selectedItem.title => ${selectedItem.title}');
-    _view.showMessage('You select: ${selectedItem.title}');
+    _store.dispatch(ProgressAction.SHOW);
+    prefWrapper
+        .select(searchType, selectedItem.title)
+        .whenComplete(() => _store.dispatch(ProgressAction.HIDE))
+        .then((b) => _view.showHomePage(SelectedData(searchType, selectedItem.title), 'You selected: ${selectedItem.title}'));
   }
 
-  void tapOnItem(int index, String text) {
-    print('selectedItem: $index => $text');
-    _store.dispatch(SelectItemAction(index, text));
+  void tapOnItem(ListItem item) {
+    _store.dispatch(SelectItemAction(item.position, item.title));
   }
 
-  SearchType _newSearchType() => searchType == SearchType.GROUP ? SearchType.TEACHER : SearchType.GROUP;
+  ScheduleType _newSearchType() => _typeIsGroup() ? ScheduleType.TEACHER : ScheduleType.GROUP;
+
+  bool _typeIsGroup() => searchType == ScheduleType.GROUP;
 }
 
 abstract class BaseSearchInteractor {
@@ -73,7 +75,7 @@ abstract class BaseSearchInteractor {
 
   void _handleSuccess(String query, List<String> items) {
     _store.dispatch(SearchResponseAction(query, items, null));
-    _view.hideErrorMessage();
+    _view.hideMessage();
   }
 
     void _handleError(String query, error) {
@@ -90,7 +92,7 @@ abstract class BaseSearchInteractor {
       return error.toString();
     }
 
-    _doDebounce(Function fun) {
+    void _doDebounce(Function fun) {
       debounceAction.create(Duration(milliseconds: 500), fun);
     }
 
