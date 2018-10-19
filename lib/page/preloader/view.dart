@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lessons_schedule_pnu/data/preference.dart';
+import 'package:lessons_schedule_pnu/di/select.dart';
 import 'package:lessons_schedule_pnu/page/home/view.dart';
 import 'package:lessons_schedule_pnu/page/preloader/logo.dart';
 import 'package:lessons_schedule_pnu/page/selection/view.dart';
+import 'package:lessons_schedule_pnu/util/support.dart';
 
 class PreloaderPage extends StatefulWidget {
   final SharedPrefWrapper sharedPref = SharedPrefWrapper();
@@ -18,7 +20,7 @@ class PreloaderState extends State<PreloaderPage> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(milliseconds: 1500), _initialRoute);
+    Timer(Duration(milliseconds: 500), _initialRoute);
   }
 
   @override
@@ -34,11 +36,12 @@ class PreloaderState extends State<PreloaderPage> {
   }
 
   void _showSelectPage() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => SelectPage()));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (_) => SelectionPage(searchStore(ScheduleType.GROUP), searchInteractor(type: ScheduleType.GROUP))));
   }
 
   void _showHomePage(SelectedData selectedData) {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => HomePage(data: selectedData)));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => HomePage(data: selectedData)));
   }
 
   Future<bool> _isUserAuthenticated() => widget.sharedPref.isAuthenticated();

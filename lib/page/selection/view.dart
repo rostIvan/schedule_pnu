@@ -8,23 +8,39 @@ import 'package:lessons_schedule_pnu/util/support.dart';
 import 'package:redux/redux.dart';
 
 
-class SelectPage extends StatelessWidget {
-  final store = Store<SearchState>(
-      searchReducer,
-      initialState: SearchState(ScheduleType.GROUP, null, false, null, null, null),
-      distinct: true,
-    middleware: [ middle ]
-  );
-  final interactor = SearchInteractor();
-  final textController = TextEditingController();
-  final _scaffoldKey = new GlobalKey<ScaffoldState>();
+class SelectionPage extends StatefulWidget {
+  final Store<SearchState> store;
+  final SearchInteractor interactor;
 
-  SelectPage({Key key}) : super(key: key);
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  SelectionPage(this.store, this.interactor, {Key key}) : super(key: key);
+
+  @override
+  SelectionPageState createState() => SelectionPageState(store, interactor, _scaffoldKey);
+}
+
+class SelectionPageState extends State<SelectionPage> {
+  final Store<SearchState> store;
+  final SearchInteractor interactor;
+
+  final _scaffoldKey;
+
+  final textController = TextEditingController();
+  final appBarSearchTypeInfo = SearchTypeInfo();
+
+
+  SelectionPageState(this.store, this.interactor, this._scaffoldKey);
+
+  @override
+  void initState() {
+    interactor.attach(this, store);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     var scaffold = Scaffold(key: _scaffoldKey, appBar: _buildAppBar(), body: _buildBody(), floatingActionButton: _buildFab());
-    interactor.attach(this, store);
     return StoreProvider<SearchState>(store: store, child: scaffold);
   }
 
@@ -33,10 +49,7 @@ class SelectPage extends StatelessWidget {
     actions: <Widget>[ _selectButton() ],
   );
 
-  Widget _appBarTitle() => StoreConnector<SearchState, String>(
-      converter: (store) => store.state.searchType == ScheduleType.GROUP ? 'групи' : 'викладача',
-      builder: (context, text) => Text('Пошук $text')
-  );
+  Widget _appBarTitle() => Row(children: <Widget>[ Text('Пошук '), appBarSearchTypeInfo ]);
 
   Widget  _selectButton() => StoreConnector<SearchState, SearchState>(
       converter: (store) => store.state,
@@ -55,8 +68,8 @@ class SelectPage extends StatelessWidget {
   );
 
   Widget _buildInput() => SearchTextField(
-          controller: textController,
-          interactor: interactor
+      controller: textController,
+      interactor: interactor
   );
 
   Widget _buildSearchArea() => StoreConnector<SearchState, SearchState>(
@@ -77,6 +90,7 @@ class SelectPage extends StatelessWidget {
   }
 
   void showHomePage(SelectedData data, String message) {
+    Navigator.of(_scaffoldKey.currentContext).pop();
     Navigator.of(_scaffoldKey.currentContext).pushReplacement(
         MaterialPageRoute(builder: (context) => HomePage(data: data, startMessage: message))
     );
@@ -86,16 +100,14 @@ class SelectPage extends StatelessWidget {
 class SearchTextField extends StatelessWidget {
   final SearchInteractor interactor;
   final TextEditingController controller;
-  static final _orderFormKey = GlobalKey<FormFieldState<String>>();
 
-  SearchTextField({Key key, this.interactor, this.controller}) : super(key: key);
+  SearchTextField({Key key, this.interactor, this.controller});
 
   @override
   Widget build(BuildContext context) => StoreConnector<SearchState, ScheduleType> (
           converter: (store) => store.state.searchType,
           builder: (context, searchType) =>
               TextField(
-                  key: _orderFormKey,
                   controller: controller,
                   onChanged: (text) => interactor.search(text),
                   style: TextStyle(fontSize: 18.0, color: Colors.black),
@@ -182,4 +194,59 @@ class CircleIconButton extends StatelessWidget {
               Icon(icon, size: size * 0.8, color: Theme.of(context).accentColor) // 60% width for icon
             ],
           )));
+}
+
+class SearchTypeInfo extends StatefulWidget {
+  final searchType = SearchTypeState();
+
+  @override
+  SearchTypeState createState() => searchType;
+
+  AnimationController animationController() => searchType.translationController;
+}
+
+class SearchTypeState extends State<SearchTypeInfo> with SingleTickerProviderStateMixin {
+  Animation<double> translationAnimation;
+  AnimationController translationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _initAnim();
+  }
+
+  void _initAnim() {
+    translationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
+    translationAnimation = Tween(begin: -0.1, end: 0.0).animate(translationController)
+      ..addListener(() {
+        setState(() {});
+      });
+    translationController.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var animatedBuilder = AnimatedBuilder(
+          animation: translationController,
+          builder: (BuildContext context, Widget child) => Transform(
+              transform: Matrix4.translationValues(0.0, translationAnimation.value * height, 0.0),
+              child: StoreConnector<SearchState, String>(
+                  converter: (store) => store.state.searchType == ScheduleType.GROUP ? 'групи' : 'викладача',
+                  builder: (context, text) => AnimatedOpacity(
+                      opacity: translationAnimation.value > -0.03 ? 1.0 : 0.0,
+                      duration: Duration(milliseconds: 150),
+                      child: Text(text)
+                  )
+              )
+          )
+    );
+    return animatedBuilder;
+  }
+
+  @override
+  void dispose() {
+    translationController.dispose();
+    super.dispose();
+  }
 }

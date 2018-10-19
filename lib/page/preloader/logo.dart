@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -20,10 +18,8 @@ class _LogoState extends State<Logo> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(milliseconds: 800), () {
-      setState(() {
-        radius += 30;
-      });
+    setState(() {
+      radius += 30;
     });
   }
 
@@ -32,8 +28,8 @@ class _LogoState extends State<Logo> with TickerProviderStateMixin {
     children: <Widget>[
       AnimatedSize(
           child: _logo(),
-          duration: Duration(seconds: 15),
-          curve: Curves.bounceOut,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.ease,
           vsync: this
       )
     ],
@@ -46,6 +42,13 @@ class _LogoState extends State<Logo> with TickerProviderStateMixin {
     ],
   );
 
-  Widget _avatar() => CircleAvatar(child: Image.asset('assets/pnu_logo.png'), radius: radius, backgroundColor: Colors.transparent);
+  Widget _avatar() => PnuAvatar(radius: radius);
   Widget _logoText() => Padding(child: Text('Розклад ПНУ', style: TextStyle(fontSize: textSize, color: Colors.white)), padding: EdgeInsets.all(12.0));
+}
+
+class PnuAvatar extends StatelessWidget {
+  final double radius;
+  const PnuAvatar({this.radius = 24.0, Key key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) => CircleAvatar(child: Image.asset('assets/pnu_logo.png'), radius: radius, backgroundColor: Colors.transparent);
 }

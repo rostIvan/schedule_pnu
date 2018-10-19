@@ -9,8 +9,10 @@ import 'package:lessons_schedule_pnu/util/support.dart';
 import 'package:redux/redux.dart';
 
 class SearchInteractor extends BaseSearchInteractor {
-  ScheduleType searchType = ScheduleType.GROUP;
   final prefWrapper = SharedPrefWrapper();
+  ScheduleType searchType = ScheduleType.GROUP;
+
+  SearchInteractor({this.searchType});
 
   @override
   ApiSearchService apiSearchService(String query) => _typeIsGroup() ?
@@ -20,6 +22,12 @@ class SearchInteractor extends BaseSearchInteractor {
     searchType = _newSearchType();
     clearText();
     _store.dispatch(ChangeSearchTypeAction(searchType));
+    _animateAppBar();
+  }
+
+  void _animateAppBar() {
+    _view.appBarSearchTypeInfo.animationController().reset();
+    _view.appBarSearchTypeInfo.animationController().forward();
   }
 
   void clearText() {
@@ -28,7 +36,6 @@ class SearchInteractor extends BaseSearchInteractor {
   }
 
   void selectItem(ListItem selectedItem) async {
-    print('selectedItem.title => ${selectedItem.title}');
     _store.dispatch(ProgressAction.SHOW);
     prefWrapper
         .select(searchType, selectedItem.title)
@@ -47,10 +54,10 @@ class SearchInteractor extends BaseSearchInteractor {
 
 abstract class BaseSearchInteractor {
   final DebounceAction debounceAction = DebounceAction();
-  SelectPage _view;
+  SelectionPageState _view;
   Store<SearchState> _store;
 
-  void attach(SelectPage page, Store<SearchState> store) {
+  void attach(SelectionPageState page, Store<SearchState> store) {
     this._view = page;
     this._store = store;
   }
