@@ -20,6 +20,8 @@ void main() {
   searchService1.fetchALl().then((items) => items.forEach((item) => print(item)));
   final ApiSearchService searchService2 = GroupsSuggestionSearch('ІПЗ-');
   searchService2.fetchALl().then((items) => items.forEach((item) => print(item)));
+  final ApiSearchService searchService3 = GroupsSuggestionSearch('1');
+  searchService3.fetchALl().then((items) => items.forEach((item) => print(item)));
 }
 
 handleError(error) {

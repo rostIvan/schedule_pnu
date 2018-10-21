@@ -41,7 +41,6 @@ class BodyState extends State<HomeBody> {
   Widget build(BuildContext context) => _createBody();
 
   Widget _createBody() => Stack(
-      alignment: FractionalOffset.bottomCenter,
       children: <Widget>[
         _pageView(),
         _pageIndicator()
@@ -85,15 +84,92 @@ class PageFactory {
 
 class FirstPage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Container(decoration: BoxDecoration(color: Colors.primaries[1]));
+  Widget build(BuildContext context) => Center(child: Column(
+    children: <Widget>[
+      ScheduleCard(label: 'Сьогодні', dayShort: 'Пн.', date: '12.10', icon: Icons.calendar_today),
+      ScheduleCard(label: 'Завтра', dayShort: 'Вт.', date: '13.10', icon: Icons.today),
+    ],
+  ));
 }
 
 class SecondPage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Container(decoration: BoxDecoration(color: Colors.primaries[2]));
+  Widget build(BuildContext context) => Center(child: Column(
+    children: <Widget>[
+      ScheduleCard(label: 'Тиждень', dayShort: 'Пн. - Сб.', date: '12.10 - 18.10', icon: Icons.next_week),
+      ScheduleCard(label: '2 тижні', dayShort: 'Пн. - Сб.', date: '12.10 - 25.10', icon: Icons.shop_two),
+    ],
+  ));
 }
 
 class ThirdPage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Container(decoration: BoxDecoration(color: Colors.primaries[3]));
+  Widget build(BuildContext context) => Center(child: Column(
+    children: <Widget>[
+      ScheduleCard(label: 'Вибрати дату', dayShort: '', date: 'дд.мм.рр', icon: Icons.calendar_view_day),
+      ScheduleCard(label: 'Вибрати період', dayShort: '', date: 'дд.мм.рр - дд.мм.рр', icon: Icons.date_range),
+    ],
+  ));
+}
+
+
+class ScheduleCard extends StatelessWidget {
+  final String date;
+  final String dayShort;
+  final String label;
+  final IconData icon;
+  const ScheduleCard({Key key, this.date, this.dayShort, this.label, this.icon}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    var imageRadius = height * 0.1;
+    var card = Container(
+      padding: _innerPadding(width, height),
+      decoration: _borderRadiusDecoration(context),
+      child: _content(context, height, imageRadius),
+    );
+    var expanded = Expanded(child: Padding(padding: _outerPadding(width, height), child: Opacity(opacity: 0.9, child: card)));
+    return expanded;
+  }
+
+  Widget _content(BuildContext context, double height, double imageRadius) => LayoutBuilder(
+        builder: (context, box) => Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              _header(),
+              box.biggest.height > 80.0 ? _centerCircleImage(context, imageRadius) : SizedBox(),
+              _bottomLabel()
+            ]
+        )
+    );
+
+  Widget _bottomLabel() => Flexible(child: _textBottom(label));
+
+  Widget _centerCircleImage(BuildContext context, double r) => Flexible(
+      flex: 2,
+      child: CircleAvatar(radius: r,
+          backgroundColor: Colors.white,
+          child: Icon(icon, size: r * 0.75, color: Theme.of(context).primaryColor)
+      )
+  );
+
+  Widget _header() => Flexible(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[ _textHeader(dayShort), _textHeader(date) ],
+      )
+  );
+
+  BoxDecoration _borderRadiusDecoration(BuildContext context) => BoxDecoration(
+      color: Theme.of(context).primaryColor,
+      borderRadius: BorderRadius.all(Radius.circular(14.0))
+  );
+
+  EdgeInsets _innerPadding(double width, double height) => EdgeInsets.symmetric(horizontal: width * 0.025, vertical: height * 0.0105);
+  EdgeInsets _outerPadding(double width, double height) => EdgeInsets.symmetric(horizontal: width * 0.1, vertical: height * 0.05);
+
+  Text _textHeader(text) => Text(text, style: TextStyle(color: Colors.white, fontSize: 18.0));
+  Text _textBottom(text) => Text(text, style: TextStyle(color: Colors.white, fontSize: 24.0));
 }

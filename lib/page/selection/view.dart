@@ -24,7 +24,7 @@ class SelectionPageState extends State<SelectionPage> {
   final Store<SearchState> store;
   final SearchInteractor interactor;
 
-  final _scaffoldKey;
+  final GlobalKey<ScaffoldState> _scaffoldKey;
 
   final textController = TextEditingController();
   final appBarSearchTypeInfo = SearchTypeInfo();

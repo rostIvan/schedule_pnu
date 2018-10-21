@@ -20,7 +20,7 @@ class HomeDrawer extends StatelessWidget {
             currentAccountPicture: PnuAvatar(),
             otherAccountsPictures: <Widget>[ CircleAvatar(child: Text(_firstLetter())) ],
             accountEmail: Text(data.selected),
-            accountName: _selectGroup() ? Text('Розклад для групи') : Text('Розклад для викладача')),
+            accountName: _selectedGroup() ? Text('Розклад для групи') : Text('Розклад для викладача')),
         DrawerItem('Змінити групу', Icons.group, onClick: () => _openSelectGroupPage(context)),
         DrawerItem('Змінити викладача', Icons.person, onClick: () => _openSelectTeacherPage(context)),
         DrawerItem('Порівняти розклад груп', Icons.compare, onClick: () => null),
@@ -40,7 +40,7 @@ class HomeDrawer extends StatelessWidget {
     )));
   }
 
-  bool _selectGroup() => data.scheduleType == ScheduleType.GROUP;
+  bool _selectedGroup() => data.scheduleType == ScheduleType.GROUP;
   String _firstLetter() => data.selected.split('')[0];
 }
 

@@ -31,7 +31,8 @@ abstract class ApiSearch implements ApiSearchService {
     final response = await http.get(fullUrl);
     if (response.statusCode != 200)
       throw http.ClientException('Status code = ${response.statusCode}', Uri.parse(fullUrl));
-    var jsonResponse = json.decode(decodeCp1251(response.bodyBytes));
+    final covertCp12512 = decodeCp1251(response.bodyBytes).replaceAll(r'\', r'\\');
+    final jsonResponse = json.decode(covertCp12512);
     final suggestions = jsonResponse['suggestions'];
     return  List<String>.from(suggestions);
   }
