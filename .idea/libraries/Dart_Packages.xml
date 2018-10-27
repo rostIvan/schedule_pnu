@@ -72,6 +72,13 @@
             </list>
           </value>
         </entry>
+        <entry key="date_range_picker">
+          <value>
+            <list>
+              <option value="$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/date_range_picker-1.0.2/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="flutter">
           <value>
             <list>
@@ -421,6 +428,7 @@
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/crypto-2.0.6/lib" />
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/csslib-0.14.5/lib" />
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-0.1.2/lib" />
+      <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/date_range_picker-1.0.2/lib" />
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_redux-0.5.2/lib" />
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/front_end-0.1.4/lib" />
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/glob-1.1.7/lib" />

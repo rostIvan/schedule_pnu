@@ -6,8 +6,8 @@ void main() {
   final ScheduleService service = ScheduleScrapper(
       teacher: 'Іщеряков* Сергій Михайлович',
       group: 'ІПЗ-3',
-      startDate: formattedDate(DateTime.now().add(Duration(days: 1))),
-      endDate: formattedDate(DateTime.now().add(Duration(days: 8))));
+      startDate: formatDate(DateTime.now().add(Duration(days: 1))),
+      endDate: formatDate(DateTime.now().add(Duration(days: 8))));
   service.getSchedule()
       .then((items) {
         items.forEach((daySchedule) {

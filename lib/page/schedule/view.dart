@@ -25,7 +25,7 @@ class SchedulePageState extends State<SchedulePage>  {
     body: Center(child: _info()),
   );
 
-  Text _info() => Text('${widget.data.scheduleType} => ${widget.data.selected}\n\n' + (widget.dateTime != null ? formattedDate(widget.dateTime) : widget.period.toString()));
+  Text _info() => Text('${widget.data.scheduleType} => ${widget.data.selected}\n\n' + (widget.dateTime != null ? formatDate(widget.dateTime) : widget.period.toString()));
 }
 
 class SchedulePeriod {

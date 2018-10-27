@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lessons_schedule_pnu/data/preference.dart';
 import 'package:lessons_schedule_pnu/page/schedule/view.dart';
 import 'package:lessons_schedule_pnu/util/date.dart';
+import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 
 
 class FirstPage extends CardsDatePage {
@@ -58,10 +59,52 @@ class ThirdPage extends CardsDatePage {
   @override
   Widget build(BuildContext context) => Center(child: Column(
     children: <Widget>[
-      ScheduleCard(label: 'Вибрати дату', dayShort: '', date: 'дд.мм.рр', icon: Icons.calendar_view_day),
-      ScheduleCard(label: 'Вибрати період', dayShort: '', date: 'дд.мм.рр - дд.мм.рр', icon: Icons.date_range),
+      ScheduleCard(
+          label: 'Вибрати дату',
+          onClick: () => _pickDate(context),
+          dayShort: '',
+          date: 'дд.мм.рр',
+          icon: Icons.calendar_view_day
+      ),
+      ScheduleCard(
+          label: 'Вибрати період',
+          onClick: () => _pickDateRange(context),
+          dayShort: '',
+          date: 'дд.мм.рр - дд.мм.рр',
+          icon: Icons.date_range
+      ),
     ],
   ));
+
+  void _pickDate(context) {
+    showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(_today.year, DateTime.september),
+        lastDate: DateTime(_today.year + 1, DateTime.september - 1)
+    ).then((picked) {
+      if(picked != null)
+        navigate(context, SchedulePage(data, dateTime: picked, scheduleTime: formatDate(picked))
+        );
+    });
+  }
+
+  void _pickDateRange(context) {
+    DateRagePicker.showDatePicker(
+        context: context,
+        initialFirstDate: _today,
+        initialLastDate: _today,
+        firstDate: DateTime(_today.year, DateTime.september),
+        lastDate: DateTime(_today.year + 1, DateTime.september - 1)
+    ).then((picked) {
+      if(picked != null && picked.where((e) => e != null).toList().length > 1)
+        navigate(context, SchedulePage(
+            data,
+            period: SchedulePeriod(picked[0], picked[1]),
+            scheduleTime: '(${formatRangeDates(picked[0], picked[1], showShortYear: true)})')
+        );
+    });
+  }
 }
 
 abstract class CardsDatePage extends StatelessWidget {
@@ -125,7 +168,7 @@ class ScheduleCardState extends State<ScheduleCard> with SingleTickerProviderSta
   Future<Null> animate() async {
     try {
       await _animationController.forward();
-      _animationController.reset();
+      _animationController.reverse();
     }
     on TickerCanceled {}
   }
