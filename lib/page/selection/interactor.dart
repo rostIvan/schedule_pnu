@@ -40,7 +40,7 @@ class SearchInteractor extends BaseSearchInteractor {
     prefWrapper
         .select(searchType, selectedItem.title)
         .whenComplete(() => _store.dispatch(ProgressAction.HIDE))
-        .then((b) => _view.showHomePage(SelectedData(searchType, selectedItem.title), 'You selected: ${selectedItem.title}'));
+        .then((b) => _view.showHomePage(SelectedData(searchType, selectedItem.title), 'Збережено: ${selectedItem.title}'));
   }
 
   void tapOnItem(ListItem item) {
@@ -91,11 +91,11 @@ abstract class BaseSearchInteractor {
     }
 
     String _errorMessage(error) {
-      if (error is SocketException) return 'No internet connecton';
+      if (error is SocketException) return 'Немає інтернет з\'єднання';
       if (error is NetworkException) return 'Return code: ${error.errorCode}';
       if (error is FormatException
           && error.message.contains('Unexpected character')
-          && error.toString().contains('"suggestions": ]')) return 'Nothing found';
+          && error.toString().contains('"suggestions": ]')) return 'Нічого не знайдено';
       return error.toString();
     }
 
