@@ -4,7 +4,7 @@ import 'package:lessons_schedule_pnu/page/home/cards.dart';
 import 'package:lessons_schedule_pnu/util/date.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 
-class SchedulePage extends StatefulWidget {
+class SchedulePage extends StatelessWidget  {
   final SelectedData data;
   final HeroText heroText;
   final DateTime dateTime;
@@ -12,19 +12,12 @@ class SchedulePage extends StatefulWidget {
   const SchedulePage(this.data, {Key key, this.dateTime, this.period, this.heroText}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => SchedulePageState();
-}
-
-class SchedulePageState extends State<SchedulePage>  {
-  bool loading = false;
-
-  @override
   Widget build(BuildContext context) {
-    if (widget.dateTime != null) {
-      return SingleDateSchedule(widget.data, widget.dateTime, widget.heroText);
+    if (dateTime != null) {
+      return SingleDateSchedule(data, dateTime, heroText);
     }
-    else if(widget.period != null) {
-      return RangeDateSchedule(widget.data, widget.period, widget.heroText);
+    else if(period != null) {
+      return RangeDateSchedule(data, period, heroText);
     }
     return null;
   }
@@ -37,7 +30,11 @@ class SingleDateSchedule extends StatelessWidget {
   const SingleDateSchedule(this.data, this.dateTime, this.heroText, {Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: ScrollableApp(heroText, body: ScheduleTimeline(data)),
+    body: ScrollableApp(
+        heroText,
+        [dateTime],
+        body: ScheduleTimeline(data)
+    ),
   );
 }
 
@@ -45,28 +42,33 @@ class RangeDateSchedule extends StatelessWidget {
   final SelectedData data;
   final SchedulePeriod period;
   final HeroText heroText;
-  const RangeDateSchedule(this.data, this.period, this.heroText, {Key key}) : super(key: key);
+  RangeDateSchedule (this.data, this.period, this.heroText, {Key key});
 
   @override
   Widget build(BuildContext context) {
-    var tabs =  _tabs();
+    final tabs = _tabs();
+    final pages = _pages(tabs);
     return DefaultTabController(length: tabs.length, child: Scaffold(
-      body: ScrollableApp(
-          heroText,
-          tabs: _tabs(),
-          body: TabBarView(children: List.generate(tabs.length, (i) => ScheduleTimeline(data)))
+            body: ScrollableApp(
+                heroText,
+                _dates(),
+                tabs: tabs,
+                body: TabBarView(children: pages)
+            ),
       ),
-    ));
+    );
   }
 
-  List<Widget> _tabs() {
+  List<Widget> _pages(List<Widget> tabs) => List.generate(tabs.length, (i) => ScheduleTimeline(data));
+
+  List<Widget> _tabs() => _dates()
+      .map((date) => Tab(child: Text(formatSingleDate(date))))
+      .toList();
+
+  List<DateTime> _dates() {
     final utcPeriod = period.toUtc();
-    final start = utcPeriod.from;
-    final end = utcPeriod.to;
-    final datesTabs = dateRange(start, end)
-        .map((date) => Tab(child: Text(formatSingleDate(date))))
-        .toList();
-    return datesTabs;
+    final dates = dateRange(utcPeriod.from, utcPeriod.to);
+    return dates;
   }
 }
 
@@ -74,99 +76,110 @@ class ScrollableApp extends StatefulWidget {
   final Widget body;
   final HeroText heroText;
   final List<Widget> tabs;
-  ScrollableApp(this.heroText, {Key key, this.body, this.tabs}) : super(key: key);
+  final List<DateTime> dates;
+
+  ScrollableApp(this.heroText, this.dates, {Key key, this.tabs, this.body}) : super(key: key);
+
+  double get expandedHeight => 120.0;
+  bool get isSingleDate => dates.length == 1;
+
   @override
   _ScrollableAppState createState() => _ScrollableAppState();
 }
 
 class _ScrollableAppState extends State<ScrollableApp> {
-  int counter = 1;
-  double get expandedHeight => 120.0;
+  TabController tabController;
+  DateTime selectedDate;
+
+  void _updateDate() {
+    selectedDate = widget.dates[tabController.index];
+    if(this.mounted)
+      setState(() {});
+  }
 
   @override
   void initState() {
+    selectedDate = widget.dates[0];
     super.initState();
-    if(widget.tabs != null)
-      Future.delayed(Duration.zero, () {
-        var tabController = DefaultTabController.of(context);
-        tabController.addListener(() {
-          print('index: ${tabController.index}');
-          setState(() {
-            counter = tabController.index + 1;
-          });
-        });
-      });
   }
 
   @override
   void dispose() {
+    tabController?.removeListener(_updateDate);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if(widget.tabs == null) return NestedScrollView(
+    tabController = DefaultTabController.of(context);
+    tabController?.addListener(_updateDate);
+    var scrollView = NestedScrollView(
         body: widget.body,
-        headerSliverBuilder: (context, isScrolled) => [_appBar()]
+        headerSliverBuilder: (context, isScrolled) =>
+        widget.isSingleDate ? [_appBar()] : [_appBar(), _scrollableTabs(context)]
     );
-    return NestedScrollView(
-        body: widget.body,
-        headerSliverBuilder: (context, isScrolled) => [_appBar(), _scrollableTabs()]
-    );
+    return scrollView;
   }
 
-  SliverPersistentHeader _scrollableTabs() {
-    return SliverPersistentHeader(
-        delegate: _SliverAppBarDelegate(TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
-            labelColor: Theme.of(context).primaryColor,
-            unselectedLabelColor: Colors.white,
-            indicator: new BubbleTabIndicator(
-                indicatorHeight: 28.0,
-                indicatorColor: Colors.white,
-                tabBarIndicatorSize: TabBarIndicatorSize.tab,
-            ),
-            tabs: widget.tabs,
-            isScrollable: true
-        )),
-        pinned: true,
-      );
-  }
+  SliverPersistentHeader _scrollableTabs(BuildContext context) => SliverPersistentHeader(
+    pinned: true,
+    delegate: _SliverAppBarDelegate(TabBar(
+      tabs: widget.tabs,
+      isScrollable: true,
+      indicatorSize: TabBarIndicatorSize.tab,
+      labelColor: Theme.of(context).primaryColor,
+      unselectedLabelColor: Colors.white,
+      indicator: BubbleTabIndicator(
+        indicatorHeight: 28.0,
+        indicatorColor: Colors.white,
+        tabBarIndicatorSize: TabBarIndicatorSize.tab,
+      ),
+    )),
+  );
 
   SliverAppBar _appBar() {
     return SliverAppBar(
         elevation: 0.0,
-        expandedHeight: expandedHeight,
+        expandedHeight: widget.expandedHeight,
         pinned: true,
         title: HeroAppBarTitle(widget.heroText),
         flexibleSpace: FlexibleSpaceBar(
-            background: _titleWidget(),
+            background: CenterDateTitle(selectedDate),
             centerTitle: true
         )
-      );
+    );
   }
+}
 
-  Widget _titleWidget() => Padding(
-    padding: EdgeInsets.all(6.0),
-    child: Row(
+class CenterDateTitle extends StatelessWidget {
+  final DateTime current;
+  const CenterDateTitle(this.current, {Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final day = Text('${current.day}', style: TextStyle(color: Colors.white, fontSize: 58.0));
+    final weekday = Text('${formatFullWeekDay(current)}', style: TextStyle(color: Colors.white, fontSize: 22.0));
+    final monthYear = Text('${formatFullMonth(current)} ${current.year}', style: TextStyle(color: Colors.white70, fontSize: 16.0));
+    final padding = Padding(
+      padding: EdgeInsets.all(6.0),
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
-        Text('$counter', style: TextStyle(color: Colors.white, fontSize: 58.0)),
-        Padding(
-          padding: const EdgeInsets.only(left: 6.0, bottom: 12.0),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text('Wednesday', style: TextStyle(color: Colors.white, fontSize: 22.0)),
-                Text('September 2018', style: TextStyle(color: Colors.white70, fontSize: 16.0))
-          ]),
-        )
-      ]),
+          day,
+          Padding(
+            padding: const EdgeInsets.only(left: 6.0, bottom: 12.0),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[ weekday, monthYear ]
+            ),
+          )
+        ]),
   );
+    return padding;
+  }
 }
-
 
 class HeroAppBarTitle extends StatelessWidget {
   final HeroText heroText;
@@ -192,11 +205,21 @@ class HeroAppBarTitle extends StatelessWidget {
 
 class ScheduleTimeline extends StatelessWidget {
   final SelectedData data;
+
   const ScheduleTimeline(this.data, {Key key}) : super(key: key);
+
+  // TODO add timeline ui
   @override
-  Widget build(BuildContext context) => Center(
-      child: Text('${data.scheduleType} => ${data.selected}')
-  );
+  Widget build(BuildContext context) => ListView.builder(
+        itemBuilder: (BuildContext context, int index) => Stack(
+            children: <Widget>[
+              _info()
+            ],
+          ),
+        itemCount: 1,
+      );
+
+  Center _info() => Center(child: Text('${data.scheduleType} => ${data.selected}'));
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {

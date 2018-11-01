@@ -236,8 +236,6 @@ class ScheduleCardState extends State<ScheduleCard> with SingleTickerProviderSta
 
   EdgeInsets _innerPadding(double width, double height) => EdgeInsets.symmetric(horizontal: width * 0.025, vertical: height * 0.0105);
   EdgeInsets _outerPadding(double width, double height) {
-//    var horizontal = width * 0.1;
-//    var vertical = height * 0.05;
     var horizontal = width * 0.1 * (1 - ((_zoomOut.value - 50) / 550));
     var vertical = height * 0.05 * (1 - ((_zoomOut.value - 50) / 550));
     var edgeInsets = EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical);

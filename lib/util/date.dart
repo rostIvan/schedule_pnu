@@ -35,3 +35,34 @@ List<DateTime> dateRange(DateTime startDate, DateTime endDate) {
   var range = endDate.difference(startDate).inDays + 1;
   return List.generate(range, (i) => startDate.add(Duration(days: i)).toUtc()).toList();
 }
+
+String formatFullWeekDay(DateTime date) {
+  switch(date.weekday) {
+    case 1: return 'Понеділок';
+    case 2: return 'Вівторок';
+    case 3: return 'Середа';
+    case 4: return 'Четвер';
+    case 5: return 'П\'ятниця';
+    case 6: return 'Субота';
+    case 7: return 'Неділя';
+  }
+  return null;
+}
+
+String formatFullMonth(DateTime date) {
+  switch(date.month) {
+    case 1 : return 'Січень';
+    case 2 : return 'Лютий';
+    case 3 : return 'Березень';
+    case 4 : return 'Квітень';
+    case 5 : return 'Травень';
+    case 6 : return 'Червень';
+    case 7 : return 'Липень';
+    case 8 : return 'Серпень';
+    case 9 : return 'Вересень';
+    case 10 : return 'Жовтень';
+    case 11 : return 'Листопад';
+    case 12 : return 'Грудень';
+  }
+  return null;
+}
