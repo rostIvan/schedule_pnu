@@ -27,7 +27,7 @@ class DataExtractor {
     var info = tdTags[2].text.trim().replaceAll(RegExp(r'\s{2,}'), ' ');
     if (info.isEmpty)
       return Lesson(lessonNumber, LessonTime(timeStart, timeEnd), null, null);
-    var audience = int.parse(RegExp(r'(\d+)').firstMatch(info).group(0));
+    var audience = RegExp(r'(\d+.?)').firstMatch(info).group(0).trim();
     var lessonInfo = info.replaceAll(audience.toString() + ' ', '');
     return Lesson(lessonNumber, LessonTime(timeStart, timeEnd), audience, lessonInfo);
   }

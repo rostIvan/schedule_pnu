@@ -10,7 +10,7 @@ class DaySchedule {
 class Lesson {
   final int number;
   final LessonTime time;
-  final int audience;
+  final String audience;
   final String info;
   Lesson(this.number, this.time, this.audience, this.info);
   @override

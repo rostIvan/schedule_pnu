@@ -6,72 +6,87 @@ import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 
 
 class FirstPage extends CardsDatePage {
+  final HeroText todayHeroText = HeroText('todayHeroText', 'сьогодні');
+  final HeroText tomorrowHeroText = HeroText('tomorrowHeroText', 'завтра');
+
   FirstPage(SelectedData data) : super(data);
 
   @override
   Widget build(BuildContext context) => Center(child: Column(
     children: <Widget>[
       ScheduleCard(
-          label: 'Сьогодні',
-          onClick: () => navigate(context, SchedulePage(data, dateTime: _today, scheduleTime: 'сьогодні',)),
-          dayShort: formatWeekDay(_today),
-          date: formatSingleDate(_today),
-          icon: Icons.calendar_today
+        label: 'Сьогодні',
+        onClick: () => navigate(context, SchedulePage(data, dateTime: _today, heroText: todayHeroText)),
+        dayShort: formatWeekDay(_today),
+        date: formatSingleDate(_today),
+        icon: Icons.calendar_today,
+        tag: todayHeroText.tag,
       ),
       ScheduleCard(
-          label: 'Завтра',
-          onClick: () => navigate(context, SchedulePage(data, dateTime: _tomorrow, scheduleTime: 'завтра')),
-          dayShort: formatWeekDay(_tomorrow),
-          date: formatSingleDate(_tomorrow),
-          icon: Icons.today
+        label: 'Завтра',
+        onClick: () => navigate(context, SchedulePage(data, dateTime: _tomorrow, heroText: tomorrowHeroText)),
+        dayShort: formatWeekDay(_tomorrow),
+        date: formatSingleDate(_tomorrow),
+        icon: Icons.today,
+        tag: tomorrowHeroText.tag,
       ),
     ],
   ));
 }
 
 class SecondPage extends CardsDatePage {
+  final HeroText weekHeroText = HeroText('weekHeroText', 'тиждень');
+  final HeroText twoWeeksHeroText = HeroText('twoWeeksHeroText', '2 тижні');
+
   SecondPage(SelectedData data) : super(data);
 
   @override
   Widget build(BuildContext context) => Center(child: Column(
     children: <Widget>[
       ScheduleCard(
-          label: 'Тиждень',
-          onClick: () => navigate(context, SchedulePage(data, period: SchedulePeriod(_today, _week), scheduleTime: 'тиждень')),
-          dayShort: formatWeekDay(_today),
-          date: formatRangeDates(_today, _week),
-          icon: Icons.next_week
+        label: 'Тиждень',
+        onClick: () => navigate(context, SchedulePage(data, period: SchedulePeriod(_today, _week), heroText: weekHeroText)),
+        dayShort: formatWeekDay(_today),
+        date: formatRangeDates(_today, _week),
+        icon: Icons.next_week,
+        tag: weekHeroText.tag,
       ),
       ScheduleCard(
-          label: '2 тижні',
-          onClick: () => navigate(context, SchedulePage(data, period: SchedulePeriod(_today, _twoWeeks), scheduleTime: '2 тижні')),
-          dayShort: formatWeekDay(_today),
-          date: formatRangeDates(_today, _twoWeeks),
-          icon: Icons.shop_two
+        label: '2 тижні',
+        onClick: () => navigate(context, SchedulePage(data, period: SchedulePeriod(_today, _twoWeeks),  heroText: twoWeeksHeroText)),
+        dayShort: formatWeekDay(_today),
+        date: formatRangeDates(_today, _twoWeeks),
+        icon: Icons.shop_two,
+        tag: twoWeeksHeroText.tag,
       ),
     ],
   ));
 }
 
 class ThirdPage extends CardsDatePage {
+  final HeroText dateSelectHeroText = HeroText('dateSelectHeroText', 'дату');
+  final HeroText dateRangeHeroText = HeroText('dateRangeHeroText', 'період');
+
   ThirdPage(SelectedData data) : super(data);
 
   @override
   Widget build(BuildContext context) => Center(child: Column(
     children: <Widget>[
       ScheduleCard(
-          label: 'Вибрати дату',
-          onClick: () => _pickDate(context),
-          dayShort: '',
-          date: 'дд.мм.рр',
-          icon: Icons.calendar_view_day
+        label: 'Вибрати дату',
+        onClick: () => _pickDate(context),
+        dayShort: '',
+        date: 'дд.мм.рр',
+        icon: Icons.calendar_view_day,
+        tag: dateSelectHeroText.tag,
       ),
       ScheduleCard(
-          label: 'Вибрати період',
-          onClick: () => _pickDateRange(context),
-          dayShort: '',
-          date: 'дд.мм.рр - дд.мм.рр',
-          icon: Icons.date_range
+        label: 'Вибрати період',
+        onClick: () => _pickDateRange(context),
+        dayShort: '',
+        date: 'дд.мм.рр - дд.мм.рр',
+        icon: Icons.date_range,
+        tag: dateRangeHeroText.tag,
       ),
     ],
   ));
@@ -84,8 +99,7 @@ class ThirdPage extends CardsDatePage {
         lastDate: DateTime(_today.year + 1, DateTime.september - 1)
     ).then((picked) {
       if(picked != null)
-        navigate(context, SchedulePage(data, dateTime: picked, scheduleTime: formatDate(picked))
-        );
+        navigate(context, SchedulePage(data, dateTime: picked, heroText: dateSelectHeroText));
     });
   }
 
@@ -98,11 +112,7 @@ class ThirdPage extends CardsDatePage {
         lastDate: DateTime(_today.year + 1, DateTime.september - 1)
     ).then((picked) {
       if(picked != null && picked.where((e) => e != null).toList().length > 1)
-        navigate(context, SchedulePage(
-            data,
-            period: SchedulePeriod(picked[0], picked[1]),
-            scheduleTime: '(${formatRangeDates(picked[0], picked[1], showShortYear: true)})')
-        );
+        navigate(context, SchedulePage(data, period: SchedulePeriod(picked[0], picked[1]), heroText: dateRangeHeroText));
     });
   }
 }
@@ -131,7 +141,8 @@ class ScheduleCard extends StatefulWidget {
   final String dayShort;
   final String label;
   final IconData icon;
-  const ScheduleCard({Key key, this.date, this.dayShort, this.label, this.icon, this.onClick}) : super(key: key);
+  final String tag;
+  const ScheduleCard({Key key, this.date, this.dayShort, this.label, this.icon, this.onClick, this.tag}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => ScheduleCardState();
@@ -234,5 +245,17 @@ class ScheduleCardState extends State<ScheduleCard> with SingleTickerProviderSta
   }
 
   Text _textHeader(text) => Text(text, style: TextStyle(color: Colors.white, fontSize: 18.0));
-  Text _textBottom(text) => Text(text, style: TextStyle(color: Colors.white, fontSize: 24.0));
+  Widget _textBottom(text) => Hero(
+      tag: widget.tag,
+      child: Material(
+        color: Colors.transparent, child: Text(widget.label),
+        textStyle: Theme.of(context).textTheme.title.copyWith(color: Colors.white, fontSize: 24.0))
+  );
+}
+
+class HeroText {
+  final String tag;
+  final String text;
+
+  HeroText(this.tag, this.text);
 }

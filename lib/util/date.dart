@@ -30,3 +30,8 @@ String formatWeekDay(DateTime date) {
 }
 
 String formatWeekRange(DateTime from, DateTime to) => '${formatWeekDay(from)} - ${formatWeekDay(to)}';
+
+List<DateTime> dateRange(DateTime startDate, DateTime endDate) {
+  var range = endDate.difference(startDate).inDays + 1;
+  return List.generate(range, (i) => startDate.add(Duration(days: i)).toUtc()).toList();
+}

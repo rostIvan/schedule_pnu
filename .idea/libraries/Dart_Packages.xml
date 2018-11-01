@@ -30,6 +30,13 @@
             </list>
           </value>
         </entry>
+        <entry key="bubble_tab_indicator">
+          <value>
+            <list>
+              <option value="$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/bubble_tab_indicator-0.1.3/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="charcode">
           <value>
             <list>
@@ -422,6 +429,7 @@
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/args-1.5.0/lib" />
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/async-2.0.8/lib" />
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/boolean_selector-1.0.4/lib" />
+      <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/bubble_tab_indicator-0.1.3/lib" />
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/charcode-1.1.2/lib" />
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/collection-1.14.11/lib" />
       <root url="file://$USER_HOME$/Apps/flutter/.pub-cache/hosted/pub.dartlang.org/convert-2.0.2/lib" />
