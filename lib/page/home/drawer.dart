@@ -23,7 +23,7 @@ class HomeDrawer extends StatelessWidget {
             accountName: _selectedGroup() ? Text('Розклад для групи') : Text('Розклад для викладача')),
         DrawerItem('Змінити групу', Icons.group, onClick: () => _openSelectGroupPage(context)),
         DrawerItem('Змінити викладача', Icons.person, onClick: () => _openSelectTeacherPage(context)),
-        DrawerItem('Порівняти розклад груп', Icons.compare, onClick: () => null),
+        DrawerItem('Перейти на сайт', Icons.open_in_browser, onClick: () => null),
         DrawerItem('Вихід', Icons.exit_to_app, onClick: () => exit(0)),
       ])
   );
