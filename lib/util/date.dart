@@ -66,3 +66,9 @@ String formatFullMonth(DateTime date) {
   }
   return null;
 }
+
+DateTime parseTime(String date, String time) {
+  final d = date.split('.');
+  final t = [d[2], d[1], d[0]].join('-') + ' ' + time;
+  return DateTime.parse(t);
+}

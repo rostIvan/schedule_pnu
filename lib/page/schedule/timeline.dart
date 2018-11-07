@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:lessons_schedule_pnu/data/preference.dart';
+import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:lessons_schedule_pnu/data/model/schedule.dart';
+import 'package:lessons_schedule_pnu/util/date.dart';
 
 enum TimelineCircle {
   FILLED,
@@ -9,44 +12,75 @@ enum TimelineCircle {
 }
 
 class ScheduleTimeline extends StatelessWidget {
-  final SelectedData data;
+  final Future<List<Lesson>> scheduleFuture;
 
-  const ScheduleTimeline(this.data, {Key key}) : super(key: key);
-
-  // TODO add timeline data
+  const ScheduleTimeline({Key key, this.scheduleFuture}) : super(key: key);
+  
   @override
   Widget build(BuildContext context) {
-    var items = _items();
-    return ListView(padding: EdgeInsets.zero, children: items);
+    return FutureBuilder(
+        future: scheduleFuture,
+        builder: (context, AsyncSnapshot<List<Lesson>> snap) {
+          switch (snap.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return Center(child: CircularProgressIndicator());
+            default:
+              if (snap.hasError) {
+                if(snap.error is SocketException)
+                  return Center(child: Text('Немає інтернет з\'єднання'));
+                return SizedBox();
+              }
+              else
+                return snap.hasData && snap.data.isNotEmpty ?
+                ListView(padding: EdgeInsets.zero, children: _buildItems(snap.data)) :
+                Center(child: Text('Вихідний'));
+          }
+        }
+    );
   }
 
-  List<Widget> _items() => <Widget>[
-      TimelineItem(
-          TimelineData('1 пара', '9:00', '10:20', audience: '320a', lessonInfo: 'dasdsaljdlkdlkasjdklsajdlksjakajskjasldkjlskdjalkdjaslkdasjldkjaklsasdj'),
-          circle: TimelineCircle.FILLED,
-          isFirst: true
-      ),
-      TimelineItem(
-          TimelineData('2 пара', '10:20', '11:00', audience: '320', lessonInfo: 'dasdsaljdlkdlkasjdklsajdlksja'),
-          circle: TimelineCircle.FILLED
-      ),
-      TimelineItem(
-        TimelineData('3 пара', '12:15', '13:10', audience: '309b', lessonInfo: 'dklasdlkasjdlkasjdlkajsdkasjdskdjalksjsalkdjsalkdaj'),
-        circle: TimelineCircle.SELECTED_INDICATOR,
-        filledBackground: false,
-      ),
-      TimelineItem(
-          TimelineData('4 пара', '13:20', '14:30', audience: '310', lessonInfo: 'No lessons'),
-          circle: TimelineCircle.UNFILLED
-      ),
-      TimelineItem(
-          TimelineData('5 пара', '14:50', '15:50', audience: '318', lessonInfo: 'sjdklsajdlksajdlkajdljdlkasjdklsajdlksajdlkajdljdlkasjjdlksajdlkajdlj'),
-          circle: TimelineCircle.UNFILLED,
-          isLast: true
-      ),
-    ];
+  List<Widget> _buildItems(List<Lesson> lessons) {
+    var items = lessons
+      .map((lesson) => _lessonOrEmpty(lesson))
+      .map((lesson) => _mapTimelineItem(lesson))
+        .toList();
+    setTimelineRanges(items);
+    return items;
+  }
 
-  Center _info() => Center(child: Text('${data.scheduleType} => ${data.selected}'));
+  void setTimelineRanges(List<TimelineItem> items) {
+    items.first = items.first.makeFirst();
+    items.last = items.last.makeLast();
+  }
+
+  TimelineItem _mapTimelineItem(Lesson lesson) {
+    DateTime current = DateTime.now();
+    var timelineData = TimelineData(
+            '${lesson.number} пара',
+            lesson.time.timeStart,
+            lesson.time.timeEnd,
+            audience: lesson.audience,
+            lessonInfo: lesson.info
+        );
+    final itemStartTime = parseTime(lesson.date.fullDate, lesson.time.timeStart);
+    final itemEndTime = parseTime(lesson.date.fullDate, lesson.time.timeEnd);
+    if(current.isAfter(itemStartTime) && current.isBefore(itemEndTime) || current.isAtSameMomentAs(itemStartTime) || current.isAtSameMomentAs(itemEndTime))
+      return TimelineItem(timelineData, circle: TimelineCircle.SELECTED_INDICATOR, filledBackground: true);
+    if(current.isBefore(itemStartTime))
+      return TimelineItem(timelineData, circle: TimelineCircle.UNFILLED);
+    else if(current.isAfter(itemEndTime))
+      return TimelineItem(timelineData, circle: TimelineCircle.FILLED);
+    return TimelineItem(timelineData);
+  }
+
+  Lesson _lessonOrEmpty(Lesson lesson) => Lesson(
+      lesson.number,
+      lesson.time,
+      lesson.audience == null ? '' : lesson.audience,
+      lesson.info == null ? '---' : lesson.info,
+      lesson.date
+  );
 }
 
 class TimelineItem extends StatelessWidget {
@@ -60,7 +94,7 @@ class TimelineItem extends StatelessWidget {
     Key key,
     this.isLast = false,
     this.isFirst = false,
-    this.circle = TimelineCircle.FILLED,
+    this.circle = TimelineCircle.UNFILLED,
     this.filledBackground = false,
   }) : super(key: key);
 
@@ -96,7 +130,7 @@ class TimelineItem extends StatelessWidget {
 
   Widget _infoSide() => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 12.0),
-    child: Text('${timelineData.audience}',
+    child: timelineData.audience.isEmpty ? SizedBox() : Text('${timelineData.audience}',
       style: TextStyle(color: filledBackground ? Colors.white : Colors.blue),
     ),
   );
@@ -148,6 +182,13 @@ class TimelineItem extends StatelessWidget {
           )
       )
   );
+
+  TimelineItem makeFirst() => TimelineItem(timelineData, isFirst: true, filledBackground: filledBackground, circle: circle, isLast: isLast);
+  TimelineItem makeLast() => TimelineItem(timelineData, isLast: true, filledBackground: filledBackground, circle: circle, isFirst: isFirst);
+
+  TimelineItem makeSelectedCircle() => TimelineItem(timelineData, isLast: isLast, isFirst: isFirst, filledBackground: filledBackground, circle: TimelineCircle.SELECTED_INDICATOR);
+  TimelineItem makeFilledCircle() => TimelineItem(timelineData, isLast: isLast, isFirst: isFirst, filledBackground: filledBackground, circle: TimelineCircle.FILLED);
+  TimelineItem makeUnfilledCircle() => TimelineItem(timelineData, isLast: isLast, isFirst: isFirst, filledBackground: filledBackground, circle: TimelineCircle.UNFILLED);
 }
 
 class TimelineData {

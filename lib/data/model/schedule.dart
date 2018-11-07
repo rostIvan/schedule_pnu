@@ -8,21 +8,22 @@ class DaySchedule {
 }
 
 class Lesson {
+  final ScheduleDate date;
   final int number;
   final LessonTime time;
   final String audience;
   final String info;
-  Lesson(this.number, this.time, this.audience, this.info);
+  Lesson(this.number, this.time, this.audience, this.info, this.date);
   @override
   String toString() => "Lesson[$number $time $audience $info]";
 }
 
 class ScheduleDate {
-  final String date;
+  final String fullDate;
   final String weekDay;
-  ScheduleDate(this.date, this.weekDay);
+  ScheduleDate(this.fullDate, this.weekDay);
   @override
-  String toString() => '$date => $weekDay';
+  String toString() => '$fullDate => $weekDay';
 }
 
 class LessonTime {

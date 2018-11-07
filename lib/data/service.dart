@@ -60,6 +60,7 @@ class ScheduleScrapper implements ScheduleService {
   Future<List<DaySchedule>> _extractData() async {
     final loader = PageLoader(url, group, teacher, startDate, endDate);
     final page = await loader.getPage();
-    return DataExtractor(page).scrapeData();
+    var scrapeData = DataExtractor(page).scrapeData();
+    return scrapeData;
   }
 }

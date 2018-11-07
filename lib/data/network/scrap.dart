@@ -8,10 +8,11 @@ class DataExtractor {
   List<DaySchedule> scrapeData() {
     final List<DaySchedule> items = [];
     document.getElementsByTagName('table').forEach((table) {
-      final DaySchedule scheduleItem = DaySchedule(_getLessonDate(table));
+      final lessonDate = _getLessonDate(table);
+      final DaySchedule scheduleItem = DaySchedule(lessonDate);
       table.getElementsByTagName('tr').forEach((tr) {
         final tdTags = tr.getElementsByTagName('td');
-        final lessonItem = _getLessonItem(tdTags);
+        final lessonItem = _getLessonItem(tdTags, lessonDate);
         scheduleItem.lessons.add(lessonItem);
       });
       items.add(scheduleItem);
@@ -19,17 +20,17 @@ class DataExtractor {
     return items;
   }
 
-  Lesson _getLessonItem(List<Element> tdTags) {
+  Lesson _getLessonItem(List<Element> tdTags, ScheduleDate day) {
     var lessonNumber = int.parse(tdTags[0].text);
     var time = tdTags[1].innerHtml.split('<br>');
     var timeStart = time[0].trim();
     var timeEnd = time[1].trim();
     var info = tdTags[2].text.trim().replaceAll(RegExp(r'\s{2,}'), ' ');
     if (info.isEmpty)
-      return Lesson(lessonNumber, LessonTime(timeStart, timeEnd), null, null);
+      return Lesson(lessonNumber, LessonTime(timeStart, timeEnd), null, null, day);
     var audience = RegExp(r'(\d+.?)').firstMatch(info).group(0).trim();
     var lessonInfo = info.replaceAll(audience.toString() + ' ', '');
-    return Lesson(lessonNumber, LessonTime(timeStart, timeEnd), audience, lessonInfo);
+    return Lesson(lessonNumber, LessonTime(timeStart, timeEnd), audience, lessonInfo, day);
   }
 
   ScheduleDate _getLessonDate(Element table) {
