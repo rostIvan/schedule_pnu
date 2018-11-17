@@ -8,25 +8,25 @@ This app it's a simple flutter project for checking PNU students or teacher sche
 <table align="left" width="100%">
   <tbody>
     <tr>
-      <td colspan="1"> <img src="./screenshots/13.jpg" alt="drawing" height="640" width="320"/> </td>
-      <td colspan="1"> <img src="./screenshots/5.jpg" alt="drawing" height="640" width="320"/> </td>
+      <td colspan="1"> <img src="./screenshots/13.jpg" alt="drawing"/> </td>
+      <td colspan="1"> <img src="./screenshots/5.jpg" alt="drawing"/> </td>
     </tr>
     <tr>
-        <td> <img src="./screenshots/2.jpg" alt="drawing" height="640" width="320"/> </td>
-        <td> <img src="./screenshots/3.jpg" alt="drawing" height="640" width="320"/> </td>
-        <td> <img src="./screenshots/4.jpg" alt="drawing" height="640" width="320"/> </td>
+        <td> <img src="./screenshots/2.jpg" alt="drawing"/> </td>
+        <td> <img src="./screenshots/3.jpg" alt="drawing"/> </td>
+        <td> <img src="./screenshots/4.jpg" alt="drawing"/> </td>
     </tr>
     <tr>
-          <td> <img src="./screenshots/8.jpg" alt="drawing" height="640" width="320"/> </td>
-          <td> <img src="./screenshots/9.jpg" alt="drawing" height="640" width="320"/> </td>
-          <td> <img src="./screenshots/6.jpg" alt="drawing" height="640" width="320"/> </td>
-          <td> <img src="./screenshots/7.jpg" alt="drawing" height="640" width="320"/> </td>
+          <td> <img src="./screenshots/8.jpg" alt="drawing"/> </td>
+          <td> <img src="./screenshots/9.jpg" alt="drawing"/> </td>
+          <td> <img src="./screenshots/6.jpg" alt="drawing"/> </td>
+          <td> <img src="./screenshots/7.jpg" alt="drawing"/> </td>
     </tr>
     <tr>
-          <td><img src="./screenshots/11.jpg" alt="drawing" height="640" width="320"/> </td>
-          <td> <img src="./screenshots/12.jpg" alt="drawing" height="640" width="320"/> </td>
-          <td> <img src="./screenshots/1.jpg" alt="drawing" height="640" width="320"/> </td>
-          <td> <img src="./screenshots/10.jpg" alt="drawing" height="640" width="320"/> </td>
+          <td> <img src="./screenshots/11.jpg" alt="drawing"/> </td>
+          <td> <img src="./screenshots/12.jpg" alt="drawing"/> </td>
+          <td> <img src="./screenshots/1.jpg" alt="drawing"/> </td>
+          <td> <img src="./screenshots/10.jpg" alt="drawing"/> </td>
     </tr>
   </tbody>
 </table>
