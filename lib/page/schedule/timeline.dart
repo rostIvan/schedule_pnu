@@ -84,28 +84,33 @@ class ScheduleTimeline extends StatelessWidget {
 }
 
 class TimelineItem extends StatelessWidget {
+  static const double DEFAULT_LINE_HEIGHT = 35.0;
   final TimelineData timelineData;
   final bool isLast;
   final bool isFirst;
   final TimelineCircle circle;
   final bool filledBackground;
+  final double lineHeight;
 
-  const TimelineItem(this.timelineData, {
+const TimelineItem(this.timelineData, {
     Key key,
     this.isLast = false,
     this.isFirst = false,
     this.circle = TimelineCircle.UNFILLED,
     this.filledBackground = false,
+    this.lineHeight = DEFAULT_LINE_HEIGHT,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Container(
     decoration: filledBackground ? BoxDecoration(color: Colors.blue) : BoxDecoration(),
     padding: EdgeInsets.all(0.0),
-    child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: _widgets()
+    child: Container(
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: _widgets()
+      ),
     ),
   );
 
@@ -135,15 +140,22 @@ class TimelineItem extends StatelessWidget {
     ),
   );
 
-  Widget _lineArea() => Column(
+  Widget _lineArea() {
+    var emptySpace = SizedBox(height: lineHeight);
+    var line = Container(
+          height: lineHeight,
+          width: 2.0,
+          decoration: BoxDecoration(color: filledBackground ? Colors.white : Colors.blue)
+    );
+    var column = Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          isFirst ? SizedBox(height: 34.0) : Container(height: 34.0, width: 2.0,
-              decoration: BoxDecoration(color: filledBackground ? Colors.white : Colors.blue)),
+          isFirst ? emptySpace : line,
           circle == TimelineCircle.FILLED ? _filledCircle() : circle == TimelineCircle.UNFILLED ? _unfilledCircle() : _selectedCircle(),
-          isLast ? SizedBox(height: 34.0) : Container(height: 34.0, width: 2.0,
-              decoration: BoxDecoration(color: filledBackground ? Colors.white : Colors.blue)),
+          isLast ? emptySpace : line,
         ]);
+    return column;
+  }
 
   Widget _timeArea() => Padding(
     padding: const EdgeInsets.all(12.0),
@@ -157,13 +169,17 @@ class TimelineItem extends StatelessWidget {
     ),
   );
 
-  Widget _rightSide() => Flexible(
-    child: Text('${timelineData.lessonInfo}',
-        style: TextStyle(color: filledBackground ? Colors.white : Colors.black),
-        softWrap: true,
-        overflow: TextOverflow.fade
-    ),
-  );
+  Widget _rightSide() {
+    final data = timelineData.lessonInfo.length > 101 ? timelineData.lessonInfo.substring(0, 101) + "..." : timelineData.lessonInfo;
+    var container = Container(
+      child: Text('$data',
+          style: TextStyle(color: filledBackground ? Colors.white : Colors.black),
+          softWrap: true,
+          overflow: TextOverflow.fade
+      ),
+    );
+    return Flexible(child: container);
+  }
 
   Widget _selectedCircle() => _circle(Colors.blue.shade200, Colors.blue, Colors.white);
   Widget _filledCircle() => _circle(Colors.transparent, Colors.blue, Colors.transparent);
