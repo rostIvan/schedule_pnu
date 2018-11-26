@@ -6,7 +6,8 @@ import 'package:lessons_schedule_pnu/di/select.dart';
 import 'package:lessons_schedule_pnu/page/preloader/logo.dart';
 import 'package:lessons_schedule_pnu/page/selection/view.dart';
 import 'package:lessons_schedule_pnu/util/support.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class HomeDrawer extends StatelessWidget {
   final SelectedData data;
@@ -24,7 +25,7 @@ class HomeDrawer extends StatelessWidget {
             accountName: _selectedGroup() ? Text('Розклад для групи') : Text('Розклад для викладача')),
         DrawerItem('Змінити групу', Icons.group, onClick: () => _openSelectGroupPage(context)),
         DrawerItem('Змінити викладача', Icons.person, onClick: () => _openSelectTeacherPage(context)),
-        DrawerItem('Перейти на сайт', Icons.open_in_browser, onClick: () => _openWebView(context)),
+        DrawerItem('Перейти на сайт', Icons.open_in_browser, onClick: () => _openBrowser(context)),
         DrawerItem('Вихід', Icons.exit_to_app, onClick: () => exit(0)),
       ])
   );
@@ -41,13 +42,10 @@ class HomeDrawer extends StatelessWidget {
     )));
   }
 
-  void _openWebView(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) =>WebviewScaffold(
-      url: "http://asu.pnu.edu.ua/cgi-bin/timetable.cgi?n=700",
-      appBar: AppBar(title: Text("Розклад ПНУ")),
-      hidden: true,
-      initialChild: Container(child: Center(child: CircularProgressIndicator())),
-    )));
+  void _openBrowser(BuildContext context) async {
+    final url = "http://asu.pnu.edu.ua/cgi-bin/timetable.cgi?n=700";
+    if(await canLaunch(url))
+      await launch(url);
   }
 
   bool _selectedGroup() => data.scheduleType == ScheduleType.GROUP;
