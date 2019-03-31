@@ -94,9 +94,9 @@ class ThirdPage extends CardsDatePage {
   void _pickDate(context) {
     showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(_today.year, DateTime.september),
-        lastDate: DateTime(_today.year + 1, DateTime.september - 1)
+        initialDate: _today,
+        firstDate: _yearBeforeNow,
+        lastDate: _yearAfterNow
     ).then((picked) {
       if(picked != null)
         navigate(context, SchedulePage(data, dateTime: picked, heroText: dateSelectHeroText));
@@ -108,8 +108,8 @@ class ThirdPage extends CardsDatePage {
         context: context,
         initialFirstDate: _today,
         initialLastDate: _today,
-        firstDate: DateTime(_today.year, DateTime.september),
-        lastDate: DateTime(_today.year + 1, DateTime.september - 1)
+        firstDate: _yearBeforeNow,
+        lastDate: _yearAfterNow
     ).then((picked) {
       if(picked != null && picked.where((e) => e != null).toList().length > 1)
         navigate(context, SchedulePage(data, period: SchedulePeriod(picked[0], picked[1]), heroText: dateRangeHeroText));
@@ -123,6 +123,8 @@ abstract class CardsDatePage extends StatelessWidget {
   final _tomorrow = fromNow(days: 1);
   final _week = fromNow(days: 7);
   final _twoWeeks = fromNow(days: 14);
+  final _yearBeforeNow = fromNow(days: -365);
+  final _yearAfterNow = fromNow(days: 365);
 
   CardsDatePage(this.data, {Key key}) : super(key: key);
 
