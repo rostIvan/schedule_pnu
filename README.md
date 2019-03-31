@@ -32,7 +32,7 @@ This app it's a simple flutter project for checking PNU students or teacher sche
 </table>
 
 ## Version
-0.09
+0.11
 ## Built With
 * Flutter [v0.9.4](https://github.com/flutter/flutter/wiki/Changelog)
 * Dart [v2.1.0](https://www.dartlang.org/tools/sdk)
@@ -44,16 +44,16 @@ If it isn't contain necessary files that you need you can just install using the
 
 1. Install [flutter](https://flutter.io/docs/get-started/install)
 2. Change flutter version
-```
+``` bash
 cd flutter
 git checkout v'0.9.4'
 ```
 3. Clone app with HTTPS
-```
+``` bash
 git clone https://github.com/rostIvan/schedule_pnu.git
 ```
 4. Install on phone using flutter
-```
+``` bash
 cd lessons_schedule_pnu
 flutter run # run debug version
 flutter build apk --release && flutter install # install realease version
