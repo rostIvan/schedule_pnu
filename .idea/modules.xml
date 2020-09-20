@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/lessons_schedule_pnu.iml" filepath="$PROJECT_DIR$/lessons_schedule_pnu.iml" />
-      <module fileurl="file://$PROJECT_DIR$/lessons_schedule_pnu_android.iml" filepath="$PROJECT_DIR$/lessons_schedule_pnu_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/schedule_pnu_updated.iml" filepath="$PROJECT_DIR$/schedule_pnu_updated.iml" />
     </modules>
   </component>
 </project>

@@ -1,12 +1,12 @@
-
 import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:lessons_schedule_pnu/data/preference.dart';
-import 'package:test/test.dart';
 
 void main() async {
   final sharedPref = SharedPrefWrapper();
   setUp(() {
-    const MethodChannel('plugins.flutter.io/shared_preferences').setMockMethodCallHandler((MethodCall methodCall) async {
+    const MethodChannel('plugins.flutter.io/shared_preferences')
+        .setMockMethodCallHandler((MethodCall methodCall) async {
       if (methodCall.method == 'getAll')
         return <String, dynamic>{}; // set initial values here if desired
       return null;
