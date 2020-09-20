@@ -21,7 +21,7 @@ class DataExtractor {
   }
 
   Lesson _getLessonItem(List<Element> tdTags, ScheduleDate day) {
-    var lessonNumber = int.parse(tdTags[0].text);
+    var lessonNumber = int.parse(tdTags[0].text.replaceAll(RegExp(r'\D+'), ''));
     var time = tdTags[1].innerHtml.split('<br>');
     var timeStart = time[0].trim();
     var timeEnd = time[1].trim();
