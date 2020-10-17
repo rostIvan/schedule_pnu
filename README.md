@@ -39,7 +39,7 @@ This app is a simple Flutter project that displays PNU schedule.
 * Dart [v2.8.4](https://www.dartlang.org/tools/sdk)
 
 ## How to install
-Check available apk or ipa files inside [realises](https://github.com/rostIvan/schedule_pnu/releases).
+Check available apk or ipa files inside [releases](https://github.com/rostIvan/schedule_pnu/releases).
 
 ## How to start locally
 1. Install [flutter](https://flutter.io/docs/get-started/install)
